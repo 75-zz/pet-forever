@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Serena: start MCP (HTTP:9121)",
+      "type": "shell",
+      "command": "uvx --from git+https://github.com/oraios/serena serena start-mcp-server --transport streamable-http --port 9121",
+      "problemMatcher": [],
+      "runOptions": { "runOn": "folderOpen" },
+      "isBackground": false,
+      "presentation": { "reveal": "never" },
+      "options": { "shell": { "executable": "powershell.exe", "args": ["-NoProfile","-ExecutionPolicy","Bypass","-Command"] } }
+    }
+  ]
+}

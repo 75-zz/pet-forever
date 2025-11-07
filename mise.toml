@@ -1,0 +1,5 @@
+[tools]
+uv = "latest"
+[tasks.serena]
+description = "Run Serena MCP server locally"
+run = "uvx --from serena-mcp serena-mcp serve --host 127.0.0.1 --port 8400"
