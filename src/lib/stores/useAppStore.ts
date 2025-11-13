@@ -108,6 +108,39 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   /**
+   * すべての画像を削除
+   */
+  clearAllImages: () => {
+    set({ images: [] });
+
+    // IndexedDBに永続化
+    storageRepo.saveImages([]);
+  },
+
+  /**
+   * すべての動画を削除
+   */
+  clearAllVideos: () => {
+    set({ videos: [], weeklySchedule: {} });
+
+    // IndexedDBに永続化
+    storageRepo.saveVideos([]);
+    storageRepo.saveSchedule({});
+  },
+
+  /**
+   * すべてのメディアを削除
+   */
+  clearAllMedia: () => {
+    set({ images: [], videos: [], weeklySchedule: {} });
+
+    // IndexedDBに永続化
+    storageRepo.saveImages([]);
+    storageRepo.saveVideos([]);
+    storageRepo.saveSchedule({});
+  },
+
+  /**
    * 画像のタグを更新
    */
   updateImageTags: (id, tags) => {

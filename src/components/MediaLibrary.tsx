@@ -13,6 +13,9 @@ export function MediaLibrary({ onClose }: { onClose: () => void }) {
   const updateVideos = useAppStore((state) => state.updateVideos);
   const removeImage = useAppStore((state) => state.removeImage);
   const removeVideo = useAppStore((state) => state.removeVideo);
+  const clearAllImages = useAppStore((state) => state.clearAllImages);
+  const clearAllVideos = useAppStore((state) => state.clearAllVideos);
+  const clearAllMedia = useAppStore((state) => state.clearAllMedia);
 
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -133,6 +136,32 @@ export function MediaLibrary({ onClose }: { onClose: () => void }) {
     updateVideos(renamedVideos);
   };
 
+  // 一括削除処理（確認ダイアログ付き）
+  const handleClearAllMedia = () => {
+    const totalCount = images.length + videos.length;
+    if (totalCount === 0) return;
+
+    if (window.confirm(`すべてのメディア（画像${images.length}件、動画${videos.length}件）を削除しますか？\nこの操作は取り消せません。`)) {
+      clearAllMedia();
+    }
+  };
+
+  const handleClearAllImages = () => {
+    if (images.length === 0) return;
+
+    if (window.confirm(`すべての画像（${images.length}件）を削除しますか？\nこの操作は取り消せません。`)) {
+      clearAllImages();
+    }
+  };
+
+  const handleClearAllVideos = () => {
+    if (videos.length === 0) return;
+
+    if (window.confirm(`すべての動画（${videos.length}件）を削除しますか？\nこの操作は取り消せません。`)) {
+      clearAllVideos();
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-sm overflow-auto">
       <div className="container mx-auto p-4 sm:p-6 md:p-8">
@@ -227,6 +256,39 @@ export function MediaLibrary({ onClose }: { onClose: () => void }) {
               </div>
               <p className="text-white/50 text-xs mt-2">
                 ファイル名を image_1.jpg, video_1.mp4 のように統一します
+              </p>
+            </div>
+
+            <div>
+              <p className="text-white/70 text-xs sm:text-sm mb-2">🗑️ 一括削除</p>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                <button
+                  onClick={handleClearAllMedia}
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  disabled={images.length === 0 && videos.length === 0}
+                >
+                  <span>🗑️</span>
+                  <span>すべて削除</span>
+                </button>
+                <button
+                  onClick={handleClearAllImages}
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  disabled={images.length === 0}
+                >
+                  <span>🖼️</span>
+                  <span>画像のみ</span>
+                </button>
+                <button
+                  onClick={handleClearAllVideos}
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                  disabled={videos.length === 0}
+                >
+                  <span>🎬</span>
+                  <span>動画のみ</span>
+                </button>
+              </div>
+              <p className="text-white/50 text-xs mt-2">
+                ⚠️ 削除したメディアは復元できません。慎重に操作してください。
               </p>
             </div>
           </div>

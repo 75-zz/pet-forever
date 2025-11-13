@@ -148,6 +148,9 @@ export interface AppState {
   updateVideos: (videos: VideoItem[]) => void;
   removeImage: (id: string) => void;
   removeVideo: (id: string) => void;
+  clearAllImages: () => void;
+  clearAllVideos: () => void;
+  clearAllMedia: () => void;
   updateImageTags: (id: string, tags: string[]) => void;
   assignVideoToWeek: (weekNumber: number, videoId: string) => void;
   updatePlayback: (playback: Partial<PlaybackState>) => void;
