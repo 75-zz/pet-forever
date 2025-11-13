@@ -1,17 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAppStore } from "@/lib/stores/useAppStore";
+import { exportAllData, importDataFromFile, getBackupStats } from "@/lib/utils/dataBackup";
 
 export function Settings({ onClose }: { onClose: () => void }) {
   const settings = useAppStore((state) => state.settings);
+  const images = useAppStore((state) => state.images);
+  const videos = useAppStore((state) => state.videos);
+  const weeklySchedule = useAppStore((state) => state.weeklySchedule);
   const updateSettings = useAppStore((state) => state.updateSettings);
+  const updateImages = useAppStore((state) => state.updateImages);
+  const updateVideos = useAppStore((state) => state.updateVideos);
+  const assignVideoToWeek = useAppStore((state) => state.assignVideoToWeek);
 
   const [localSettings, setLocalSettings] = useState(settings);
+  const importFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSave = () => {
     updateSettings(localSettings);
     onClose();
+  };
+
+  // データエクスポート
+  const handleExportData = async () => {
+    try {
+      await exportAllData(settings, images, videos, weeklySchedule);
+      alert("データのエクスポートが完了しました。");
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert("エクスポートに失敗しました。");
+    }
+  };
+
+  // データインポート
+  const handleImportData = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const backupData = await importDataFromFile(file);
+      const stats = getBackupStats(backupData);
+
+      const confirmMessage = `以下のデータをインポートしますか？\n\n画像: ${stats.imageCount}件\n動画: ${stats.videoCount}件\nエクスポート日時: ${stats.exportedAt}\n\n※既存のデータは上書きされます。`;
+
+      if (window.confirm(confirmMessage)) {
+        // データを復元
+        updateSettings(backupData.settings);
+        updateImages(backupData.images);
+        updateVideos(backupData.videos);
+
+        // 週次スケジュールを復元
+        Object.entries(backupData.weeklySchedule).forEach(([weekNumber, videoId]) => {
+          assignVideoToWeek(Number(weekNumber), videoId);
+        });
+
+        alert("データのインポートが完了しました。");
+        onClose();
+      }
+    } catch (error) {
+      console.error("Import failed:", error);
+      alert(`インポートに失敗しました: ${error instanceof Error ? error.message : "不明なエラー"}`);
+    }
+
+    // ファイル入力をリセット
+    if (importFileInputRef.current) {
+      importFileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -426,6 +481,62 @@ export function Settings({ onClose }: { onClose: () => void }) {
                   }
                   className="w-full"
                 />
+              </div>
+            </div>
+          </section>
+
+          {/* データバックアップ */}
+          <section>
+            <h3 className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4">
+              データバックアップ
+            </h3>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                すべての設定、画像、動画、スケジュールをJSONファイルとしてエクスポート/インポートできます。
+                他の端末でデータを共有する場合や、バックアップを作成する場合に使用してください。
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* エクスポートボタン */}
+                <button
+                  onClick={handleExportData}
+                  className="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <span>💾</span>
+                  <span>データをエクスポート</span>
+                </button>
+
+                {/* インポートボタン */}
+                <button
+                  onClick={() => importFileInputRef.current?.click()}
+                  className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <span>📂</span>
+                  <span>データをインポート</span>
+                </button>
+
+                <input
+                  ref={importFileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="hidden"
+                  onChange={handleImportData}
+                />
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-xs text-yellow-800">
+                  ⚠️ データをインポートすると、既存のすべてのデータが上書きされます。必要に応じて事前にエクスポートしてバックアップを作成してください。
+                </p>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-xs text-blue-800">
+                  💡 <strong>他の端末でデータを表示する方法:</strong><br />
+                  1. この端末で「データをエクスポート」をクリック<br />
+                  2. エクスポートされたJSONファイルを他の端末に転送<br />
+                  3. 他の端末で「データをインポート」からファイルを選択
+                </p>
               </div>
             </div>
           </section>
