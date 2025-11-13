@@ -3,6 +3,7 @@
 export interface ImageItem {
   id: string;
   src: string; // Data URL or Blob URL
+  fileName?: string; // ファイル名（拡張子含む）
   tags?: string[];
   takenAt?: string; // ISO 8601 date string
   weight?: number; // 希少度重み (デフォルト1.0)
@@ -12,6 +13,7 @@ export interface ImageItem {
 export interface VideoItem {
   id: string;
   src: string; // Data URL or Blob URL
+  fileName?: string; // ファイル名（拡張子含む）
   label?: string; // 第1週、第2週 etc
   weekNumber?: number; // 1-4
 }
@@ -142,6 +144,8 @@ export interface AppState {
   updateSettings: (settings: Partial<AppSettings>) => void;
   addImages: (images: ImageItem[]) => void;
   addVideos: (videos: VideoItem[]) => void;
+  updateImages: (images: ImageItem[]) => void;
+  updateVideos: (videos: VideoItem[]) => void;
   removeImage: (id: string) => void;
   removeVideo: (id: string) => void;
   updateImageTags: (id: string, tags: string[]) => void;

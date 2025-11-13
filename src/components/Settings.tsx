@@ -15,11 +15,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[300] bg-black/50 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-auto m-4 text-gray-900">
+    <div className="fixed inset-0 z-[300] bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-auto text-gray-900">
         {/* ヘッダー */}
-        <div className="sticky top-0 bg-white border-b px-8 py-6 flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-black">設定</h2>
+        <div className="sticky top-0 bg-white border-b px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-6 flex justify-between items-center z-10">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-black">設定</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-black text-2xl"
@@ -29,10 +29,10 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* コンテンツ */}
-        <div className="p-8 space-y-8">
+        <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
           {/* 基本設定 */}
           <section>
-            <h3 className="text-xl font-bold text-black mb-4">基本設定</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4">基本設定</h3>
             <div className="space-y-4">
               {/* 言語 */}
               <div>
@@ -63,7 +63,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
           {/* カレンダー設定 */}
           <section>
-            <h3 className="text-xl font-bold text-black mb-4">
+            <h3 className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4">
               カレンダー設定
             </h3>
             <div className="space-y-4">
@@ -189,7 +189,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
                   ].map((font) => (
                     <label
                       key={font.value}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                      className={`flex items-center p-2 sm:p-3 border-2 rounded-lg cursor-pointer transition-all ${
                         localSettings.calendar.font === font.value
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -210,14 +210,14 @@ export function Settings({ onClose }: { onClose: () => void }) {
                           })
                         }
                         disabled={!localSettings.calendar.visible}
-                        className="mr-3"
+                        className="mr-2 sm:mr-3"
                       />
                       <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-900 mb-1">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900 mb-1">
                           {font.label}
                         </div>
                         <div
-                          className={`text-2xl font-bold text-gray-700 font-${font.value}`}
+                          className={`text-lg sm:text-xl md:text-2xl font-bold text-gray-700 font-${font.value}`}
                         >
                           11/7 (Thu)
                         </div>
@@ -267,7 +267,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
                   ].map((size) => (
                     <label
                       key={size.value}
-                      className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                      className={`flex items-center p-2 sm:p-3 border-2 rounded-lg cursor-pointer transition-all ${
                         localSettings.calendar.size === size.value
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -288,9 +288,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
                           })
                         }
                         disabled={!localSettings.calendar.visible}
-                        className="mr-3"
+                        className="mr-2 sm:mr-3"
                       />
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-xs sm:text-sm font-medium text-gray-900">
                         {size.label}
                       </div>
                     </label>
@@ -302,7 +302,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 
           {/* メディア設定 */}
           <section>
-            <h3 className="text-xl font-bold text-black mb-4">メディア設定</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4">メディア設定</h3>
             <div className="space-y-4">
               {/* 画像表示時間 */}
               <div>
@@ -432,16 +432,16 @@ export function Settings({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* フッター */}
-        <div className="sticky bottom-0 bg-white border-t px-8 py-6 flex justify-end gap-4">
+        <div className="sticky bottom-0 bg-white border-t px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-6 flex justify-end gap-2 sm:gap-4 z-10">
           <button
             onClick={onClose}
-            className="px-6 py-2 text-gray-700 hover:text-gray-900 transition-colors"
+            className="px-4 py-2 sm:px-6 text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
           >
             キャンセル
           </button>
           <button
             onClick={handleSave}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="px-4 py-2 sm:px-6 text-sm sm:text-base bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
           >
             保存
           </button>

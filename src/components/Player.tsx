@@ -196,9 +196,9 @@ export function Player() {
       {/* コントロールレイヤー */}
       <div className="absolute inset-0 z-controls pointer-events-none">
         {/* ハンバーガーメニュー */}
-        <div className="absolute top-4 right-4 pointer-events-auto" data-menu-container>
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 pointer-events-auto" data-menu-container>
           <button
-            className="w-12 h-12 bg-black/10 hover:bg-black/20 text-black rounded-full backdrop-blur-sm transition-all border border-black/20 flex items-center justify-center"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-black/10 hover:bg-black/20 text-black rounded-full backdrop-blur-sm transition-all border border-black/20 flex items-center justify-center"
             onClick={() => setShowMenu(!showMenu)}
           >
             <svg
@@ -218,26 +218,26 @@ export function Player() {
 
           {/* メニュードロップダウン */}
           {showMenu && (
-            <div className="absolute top-14 right-0 bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden min-w-[180px] border border-white/30">
+            <div className="absolute top-12 sm:top-14 right-0 bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden min-w-[160px] sm:min-w-[180px] border border-white/30">
               <button
-                className="w-full px-3 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900"
+                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900"
                 onClick={() => {
                   setShowMediaLibrary(true);
                   setShowMenu(false);
                 }}
               >
-                <span className="text-base">📁</span>
-                <span className="text-sm font-medium">メディアライブラリ</span>
+                <span className="text-sm sm:text-base">📁</span>
+                <span className="text-xs sm:text-sm font-medium">メディアライブラリ</span>
               </button>
               <button
-                className="w-full px-3 py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
+                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
                 onClick={() => {
                   setShowSettings(true);
                   setShowMenu(false);
                 }}
               >
-                <span className="text-base">⚙️</span>
-                <span className="text-sm font-medium">設定</span>
+                <span className="text-sm sm:text-base">⚙️</span>
+                <span className="text-xs sm:text-sm font-medium">設定</span>
               </button>
             </div>
           )}
@@ -245,7 +245,7 @@ export function Player() {
 
         {/* 再生/停止ボタン */}
         <button
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto px-4 py-2 bg-black/10 hover:bg-black/20 text-black text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
+          className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
           onClick={() => updatePlayback({ isPlaying: !playback.isPlaying })}
         >
           {playback.isPlaying ? "⏸ 停止" : "▶ 再生"}

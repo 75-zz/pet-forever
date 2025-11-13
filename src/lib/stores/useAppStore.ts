@@ -64,6 +64,26 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   /**
+   * 画像を一括更新（リネーム用）
+   */
+  updateImages: (updatedImages) => {
+    set({ images: updatedImages });
+    
+    // IndexedDBに永続化
+    storageRepo.saveImages(updatedImages);
+  },
+
+  /**
+   * 動画を一括更新（リネーム用）
+   */
+  updateVideos: (updatedVideos) => {
+    set({ videos: updatedVideos });
+    
+    // IndexedDBに永続化
+    storageRepo.saveVideos(updatedVideos);
+  },
+
+  /**
    * 画像を削除
    */
   removeImage: (id) => {

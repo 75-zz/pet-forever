@@ -6,10 +6,10 @@ import { CalendarService } from "@/lib/services/CalendarService";
 import type { CalendarPosition } from "@/lib/types";
 
 const POSITION_CLASSES: Record<CalendarPosition, string> = {
-  "top-left": "top-8 left-8",
-  "top-right": "top-8 right-8",
-  "bottom-left": "bottom-8 left-8",
-  "bottom-right": "bottom-8 right-8",
+  "top-left": "top-2 left-2 sm:top-4 sm:left-4 md:top-8 md:left-8",
+  "top-right": "top-2 right-2 sm:top-4 sm:right-4 md:top-8 md:right-8",
+  "bottom-left": "bottom-2 left-2 sm:bottom-4 sm:left-4 md:bottom-8 md:left-8",
+  "bottom-right": "bottom-2 right-2 sm:bottom-4 sm:right-4 md:bottom-8 md:right-8",
 };
 
 export function Calendar() {
@@ -55,11 +55,23 @@ function DayCalendar({
   const positionClass = POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
-  // サイズに応じたクラス
+  // サイズに応じたクラス（レスポンシブ対応）
   const sizeClasses = {
-    small: { date: "text-6xl", weekday: "text-4xl", anniversary: "text-xl" },
-    medium: { date: "text-9xl", weekday: "text-6xl", anniversary: "text-3xl" },
-    large: { date: "text-[12rem]", weekday: "text-8xl", anniversary: "text-4xl" },
+    small: { 
+      date: "text-3xl sm:text-4xl md:text-6xl", 
+      weekday: "text-xl sm:text-2xl md:text-4xl", 
+      anniversary: "text-sm sm:text-base md:text-xl" 
+    },
+    medium: { 
+      date: "text-5xl sm:text-6xl md:text-9xl", 
+      weekday: "text-3xl sm:text-4xl md:text-6xl", 
+      anniversary: "text-lg sm:text-xl md:text-3xl" 
+    },
+    large: { 
+      date: "text-7xl sm:text-8xl md:text-[12rem]", 
+      weekday: "text-4xl sm:text-5xl md:text-8xl", 
+      anniversary: "text-xl sm:text-2xl md:text-4xl" 
+    },
   };
   const sizes = sizeClasses[calendar.size];
 
@@ -74,13 +86,13 @@ function DayCalendar({
       <div className={`${sizes.date} font-bold`}>
         {dateStr}
         {weekday && (
-          <span className={`ml-3 ${sizes.weekday}`}>
+          <span className={`ml-1 sm:ml-2 md:ml-3 ${sizes.weekday}`}>
             {calendar.locale === "ja" ? `(${weekday})` : weekday}
           </span>
         )}
       </div>
       {anniversary && (
-        <div className={`mt-3 ${sizes.anniversary} flex items-center gap-2`}>
+        <div className={`mt-1 sm:mt-2 md:mt-3 ${sizes.anniversary} flex items-center gap-1 sm:gap-2`}>
           {anniversary.icon && <span>{anniversary.icon}</span>}
           <span style={{ color: anniversary.color }}>{anniversary.label}</span>
         </div>
@@ -119,11 +131,29 @@ function MonthCalendar({
   const positionClass = POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
-  // サイズに応じたクラス
+  // サイズに応じたクラス（レスポンシブ対応）
   const sizeClasses = {
-    small: { month: "text-3xl", weekday: "text-sm w-10 h-10", day: "text-base w-10 h-10", gap: "gap-2", padding: "p-4" },
-    medium: { month: "text-5xl", weekday: "text-lg w-14 h-14", day: "text-xl w-14 h-14", gap: "gap-3", padding: "p-6" },
-    large: { month: "text-7xl", weekday: "text-2xl w-20 h-20", day: "text-3xl w-20 h-20", gap: "gap-4", padding: "p-8" },
+    small: { 
+      month: "text-lg sm:text-2xl md:text-3xl", 
+      weekday: "text-xs sm:text-sm w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10", 
+      day: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10", 
+      gap: "gap-1 sm:gap-1.5 md:gap-2", 
+      padding: "p-2 sm:p-3 md:p-4" 
+    },
+    medium: { 
+      month: "text-2xl sm:text-3xl md:text-5xl", 
+      weekday: "text-sm sm:text-base md:text-lg w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14", 
+      day: "text-sm sm:text-base md:text-xl w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14", 
+      gap: "gap-1.5 sm:gap-2 md:gap-3", 
+      padding: "p-3 sm:p-4 md:p-6" 
+    },
+    large: { 
+      month: "text-3xl sm:text-4xl md:text-7xl", 
+      weekday: "text-base sm:text-lg md:text-2xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20", 
+      day: "text-base sm:text-xl md:text-3xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20", 
+      gap: "gap-2 sm:gap-3 md:gap-4", 
+      padding: "p-4 sm:p-6 md:p-8" 
+    },
   };
   const sizes = sizeClasses[calendar.size];
 
@@ -133,8 +163,8 @@ function MonthCalendar({
       style={{ color: calendar.textColor }}
     >
       {/* グラスモーフィズム背景 */}
-      <div className={`bg-white/20 backdrop-blur-md rounded-2xl ${sizes.padding} shadow-xl`}>
-        <div className={`${sizes.month} font-bold mb-6`} style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)" }}>
+      <div className={`bg-white/20 backdrop-blur-md rounded-lg sm:rounded-xl md:rounded-2xl ${sizes.padding} shadow-xl`}>
+        <div className={`${sizes.month} font-bold mb-2 sm:mb-4 md:mb-6`} style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)" }}>
           {monthYear}
         </div>
         <div className={`grid grid-cols-7 ${sizes.gap}`}>
