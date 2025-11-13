@@ -157,35 +157,38 @@ function MonthCalendar({
     });
   };
 
-  // サイズに応じたクラス（レスポンシブ対応）
+  // サイズに応じたクラス（レスポンシブ対応 + 横向き対応）
   const sizeClasses = {
     small: {
-      month: "text-lg sm:text-2xl md:text-3xl",
-      weekday: "text-xs sm:text-sm w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10",
-      day: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10",
-      gap: "gap-1 sm:gap-1.5 md:gap-2",
-      padding: "p-2 sm:p-3 md:p-4"
+      month: "text-sm sm:text-lg md:text-xl",
+      weekday: "text-[10px] sm:text-xs w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8",
+      day: "text-[10px] sm:text-xs md:text-sm w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8",
+      gap: "gap-0.5 sm:gap-1 md:gap-1.5",
+      padding: "p-1.5 sm:p-2 md:p-3",
+      marginBottom: "mb-1 sm:mb-1.5 md:mb-2"
     },
     medium: {
-      month: "text-2xl sm:text-3xl md:text-5xl",
-      weekday: "text-sm sm:text-base md:text-lg w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14",
-      day: "text-sm sm:text-base md:text-xl w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14",
-      gap: "gap-1.5 sm:gap-2 md:gap-3",
-      padding: "p-3 sm:p-4 md:p-6"
+      month: "text-base sm:text-xl md:text-2xl",
+      weekday: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-7 sm:h-7 md:w-10 md:h-10",
+      day: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-7 sm:h-7 md:w-10 md:h-10",
+      gap: "gap-0.5 sm:gap-1 md:gap-2",
+      padding: "p-2 sm:p-2.5 md:p-4",
+      marginBottom: "mb-1 sm:mb-2 md:mb-3"
     },
     large: {
-      month: "text-3xl sm:text-4xl md:text-7xl",
-      weekday: "text-base sm:text-lg md:text-2xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20",
-      day: "text-base sm:text-xl md:text-3xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20",
-      gap: "gap-2 sm:gap-3 md:gap-4",
-      padding: "p-4 sm:p-6 md:p-8"
+      month: "text-lg sm:text-2xl md:text-4xl",
+      weekday: "text-sm sm:text-base md:text-lg w-7 h-7 sm:w-9 sm:h-9 md:w-14 md:h-14",
+      day: "text-sm sm:text-base md:text-lg w-7 h-7 sm:w-9 sm:h-9 md:w-14 md:h-14",
+      gap: "gap-1 sm:gap-1.5 md:gap-2.5",
+      padding: "p-2 sm:p-3 md:p-5",
+      marginBottom: "mb-1.5 sm:mb-2 md:mb-4"
     },
   };
   const sizes = sizeClasses[calendar.size];
 
   return (
     <div
-      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto`}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto max-h-screen flex items-center`}
       style={{ color: calendar.textColor }}
       onClick={toggleCalendarMode}
       role="button"
@@ -193,8 +196,8 @@ function MonthCalendar({
       aria-label="カレンダー表示を切り替え"
     >
       {/* グラスモーフィズム背景 */}
-      <div className={`bg-white/20 backdrop-blur-md rounded-lg sm:rounded-xl md:rounded-2xl ${sizes.padding} shadow-xl`}>
-        <div className={`${sizes.month} font-bold mb-2 sm:mb-4 md:mb-6`} style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)" }}>
+      <div className={`bg-white/20 backdrop-blur-md rounded-lg sm:rounded-xl md:rounded-2xl ${sizes.padding} shadow-xl max-h-[95vh] overflow-hidden`}>
+        <div className={`${sizes.month} font-bold ${sizes.marginBottom}`} style={{ textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)" }}>
           {monthYear}
         </div>
         <div className={`grid grid-cols-7 ${sizes.gap}`}>
