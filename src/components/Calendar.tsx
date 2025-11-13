@@ -88,7 +88,7 @@ function DayCalendar({
 
   return (
     <div
-      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer`}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto`}
       style={{
         color: calendar.textColor,
         textShadow: "0 1px 3px rgba(0, 0, 0, 0.15)",
@@ -185,7 +185,7 @@ function MonthCalendar({
 
   return (
     <div
-      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer`}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto`}
       style={{ color: calendar.textColor }}
       onClick={toggleCalendarMode}
       role="button"
