@@ -46,6 +46,7 @@ function DayCalendar({
   date: Date;
 }) {
   const settings = useAppStore((state) => state.settings);
+  const updateSettings = useAppStore((state) => state.updateSettings);
   const { calendar } = settings;
 
   const dateStr = service.formatDate(date, "M/d", calendar.showYear);
@@ -55,33 +56,47 @@ function DayCalendar({
   const positionClass = POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
+  // カレンダーモードを切り替える
+  const toggleCalendarMode = () => {
+    updateSettings({
+      calendar: {
+        ...calendar,
+        mode: calendar.mode === "day" ? "month" : "day",
+      },
+    });
+  };
+
   // サイズに応じたクラス（レスポンシブ対応）
   const sizeClasses = {
-    small: { 
-      date: "text-3xl sm:text-4xl md:text-6xl", 
-      weekday: "text-xl sm:text-2xl md:text-4xl", 
-      anniversary: "text-sm sm:text-base md:text-xl" 
+    small: {
+      date: "text-3xl sm:text-4xl md:text-6xl",
+      weekday: "text-xl sm:text-2xl md:text-4xl",
+      anniversary: "text-sm sm:text-base md:text-xl"
     },
-    medium: { 
-      date: "text-5xl sm:text-6xl md:text-9xl", 
-      weekday: "text-3xl sm:text-4xl md:text-6xl", 
-      anniversary: "text-lg sm:text-xl md:text-3xl" 
+    medium: {
+      date: "text-5xl sm:text-6xl md:text-9xl",
+      weekday: "text-3xl sm:text-4xl md:text-6xl",
+      anniversary: "text-lg sm:text-xl md:text-3xl"
     },
-    large: { 
-      date: "text-7xl sm:text-8xl md:text-[12rem]", 
-      weekday: "text-4xl sm:text-5xl md:text-8xl", 
-      anniversary: "text-xl sm:text-2xl md:text-4xl" 
+    large: {
+      date: "text-7xl sm:text-8xl md:text-[12rem]",
+      weekday: "text-4xl sm:text-5xl md:text-8xl",
+      anniversary: "text-xl sm:text-2xl md:text-4xl"
     },
   };
   const sizes = sizeClasses[calendar.size];
 
   return (
     <div
-      className={`fixed z-calendar ${positionClass} pointer-events-none select-none ${fontClass}`}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer`}
       style={{
         color: calendar.textColor,
         textShadow: "0 1px 3px rgba(0, 0, 0, 0.15)",
       }}
+      onClick={toggleCalendarMode}
+      role="button"
+      tabIndex={0}
+      aria-label="カレンダー表示を切り替え"
     >
       <div className={`${sizes.date} font-bold`}>
         {dateStr}
@@ -112,6 +127,7 @@ function MonthCalendar({
   date: Date;
 }) {
   const settings = useAppStore((state) => state.settings);
+  const updateSettings = useAppStore((state) => state.updateSettings);
   const { calendar } = settings;
 
   const grid = service.getMonthCalendarGrid(date);
@@ -131,36 +147,50 @@ function MonthCalendar({
   const positionClass = POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
+  // カレンダーモードを切り替える
+  const toggleCalendarMode = () => {
+    updateSettings({
+      calendar: {
+        ...calendar,
+        mode: calendar.mode === "day" ? "month" : "day",
+      },
+    });
+  };
+
   // サイズに応じたクラス（レスポンシブ対応）
   const sizeClasses = {
-    small: { 
-      month: "text-lg sm:text-2xl md:text-3xl", 
-      weekday: "text-xs sm:text-sm w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10", 
-      day: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10", 
-      gap: "gap-1 sm:gap-1.5 md:gap-2", 
-      padding: "p-2 sm:p-3 md:p-4" 
+    small: {
+      month: "text-lg sm:text-2xl md:text-3xl",
+      weekday: "text-xs sm:text-sm w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10",
+      day: "text-xs sm:text-sm md:text-base w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10",
+      gap: "gap-1 sm:gap-1.5 md:gap-2",
+      padding: "p-2 sm:p-3 md:p-4"
     },
-    medium: { 
-      month: "text-2xl sm:text-3xl md:text-5xl", 
-      weekday: "text-sm sm:text-base md:text-lg w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14", 
-      day: "text-sm sm:text-base md:text-xl w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14", 
-      gap: "gap-1.5 sm:gap-2 md:gap-3", 
-      padding: "p-3 sm:p-4 md:p-6" 
+    medium: {
+      month: "text-2xl sm:text-3xl md:text-5xl",
+      weekday: "text-sm sm:text-base md:text-lg w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14",
+      day: "text-sm sm:text-base md:text-xl w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14",
+      gap: "gap-1.5 sm:gap-2 md:gap-3",
+      padding: "p-3 sm:p-4 md:p-6"
     },
-    large: { 
-      month: "text-3xl sm:text-4xl md:text-7xl", 
-      weekday: "text-base sm:text-lg md:text-2xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20", 
-      day: "text-base sm:text-xl md:text-3xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20", 
-      gap: "gap-2 sm:gap-3 md:gap-4", 
-      padding: "p-4 sm:p-6 md:p-8" 
+    large: {
+      month: "text-3xl sm:text-4xl md:text-7xl",
+      weekday: "text-base sm:text-lg md:text-2xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20",
+      day: "text-base sm:text-xl md:text-3xl w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20",
+      gap: "gap-2 sm:gap-3 md:gap-4",
+      padding: "p-4 sm:p-6 md:p-8"
     },
   };
   const sizes = sizeClasses[calendar.size];
 
   return (
     <div
-      className={`fixed z-calendar ${positionClass} pointer-events-none select-none ${fontClass}`}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer`}
       style={{ color: calendar.textColor }}
+      onClick={toggleCalendarMode}
+      role="button"
+      tabIndex={0}
+      aria-label="カレンダー表示を切り替え"
     >
       {/* グラスモーフィズム背景 */}
       <div className={`bg-white/20 backdrop-blur-md rounded-lg sm:rounded-xl md:rounded-2xl ${sizes.padding} shadow-xl`}>
