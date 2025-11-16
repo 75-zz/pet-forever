@@ -281,7 +281,10 @@ export function Player() {
                 }}
               >
                 <span className="text-sm sm:text-base">📁</span>
-                <span className="text-xs sm:text-sm font-medium whitespace-nowrap">メディアライブラリ</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-medium whitespace-nowrap">メディアライブラリ</span>
+                  <span className="px-1.5 py-0.5 text-[10px] bg-orange-500 text-white rounded font-bold">開発中</span>
+                </div>
               </button>
               <button
                 className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
