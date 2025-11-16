@@ -57,13 +57,23 @@ function VideoPlayer() {
   const settings = useAppStore((state) => state.settings);
   const updatePlayback = useAppStore((state) => state.updatePlayback);
 
-  // 動画IDが変わったときに再読み込みと再生
+  // 動画IDが変わったときに再読み込み
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // 動画を再読み込み
+    video.load();
+  }, [playback.currentVideoId]);
+
+  // 再生状態と音量の制御
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.volume = settings.media.audioVolume / 100;
+
     const handleCanPlay = () => {
-      // 動画が再生可能になったら自動再生
       if (playback.isPlaying) {
         video.play().catch(err => {
           console.error('Video play failed:', err);
@@ -71,32 +81,24 @@ function VideoPlayer() {
       }
     };
 
-    // 動画を再読み込み
-    video.load();
-
-    // canplayイベントで再生可能になったら再生
-    video.addEventListener('canplay', handleCanPlay);
+    // すでに再生可能な場合
+    if (video.readyState >= 3) {
+      if (playback.isPlaying) {
+        video.play().catch(err => {
+          console.error('Video play failed:', err);
+        });
+      } else {
+        video.pause();
+      }
+    } else {
+      // まだ読み込み中の場合はイベントを待つ
+      video.addEventListener('canplay', handleCanPlay, { once: true });
+    }
 
     return () => {
       video.removeEventListener('canplay', handleCanPlay);
     };
-  }, [playback.currentVideoId, playback.isPlaying]);
-
-  // 音量と再生状態の制御
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.volume = settings.media.audioVolume / 100;
-
-    if (playback.isPlaying) {
-      video.play().catch(err => {
-        console.error('Video play failed:', err);
-      });
-    } else {
-      video.pause();
-    }
-  }, [playback.isPlaying, settings.media.audioVolume]);
+  }, [playback.isPlaying, settings.media.audioVolume, playback.currentVideoId]);
 
   // 動画の長さを取得してstoreに保存
   useEffect(() => {
@@ -136,6 +138,7 @@ function VideoPlayer() {
   return (
     <div className="w-full h-full flex items-center justify-center">
       <video
+        key={playback.currentVideoId}
         ref={videoRef}
         src={playback.currentVideoId}
         className="w-full h-full object-cover"
@@ -143,6 +146,7 @@ function VideoPlayer() {
         muted={!settings.media.audioEnabled}
         playsInline
         preload="auto"
+        autoPlay={playback.isPlaying}
       />
     </div>
   );
