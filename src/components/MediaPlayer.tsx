@@ -58,14 +58,17 @@ function VideoPlayer() {
   const updatePlayback = useAppStore((state) => state.updatePlayback);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = settings.media.audioVolume / 100;
+    const video = videoRef.current;
+    if (!video) return;
 
-      if (playback.isPlaying) {
-        videoRef.current.play();
-      } else {
-        videoRef.current.pause();
-      }
+    video.volume = settings.media.audioVolume / 100;
+
+    if (playback.isPlaying) {
+      video.play().catch(err => {
+        console.error('Video play failed:', err);
+      });
+    } else {
+      video.pause();
     }
   }, [playback.isPlaying, settings.media.audioVolume]);
 
@@ -108,6 +111,8 @@ function VideoPlayer() {
         className="w-full h-full object-cover"
         loop={false}
         muted={!settings.media.audioEnabled}
+        playsInline
+        preload="auto"
       />
     </div>
   );

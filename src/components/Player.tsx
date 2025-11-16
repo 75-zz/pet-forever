@@ -63,8 +63,10 @@ export function Player() {
     if (!playback.isPlaying) return;
 
     if (playback.currentRound === "video") {
-      // 動画の実際の長さを使用（取得できない場合はデフォルト15秒）
-      const videoSeconds = playback.currentVideoDuration || 15;
+      // fixed が設定されている場合はそれを使用、なければ実際の動画の長さ、なければデフォルト15秒
+      const videoSeconds = settings.media.videoSeconds.fixed
+        || playback.currentVideoDuration
+        || 15;
 
       videoTimeoutRef.current = setTimeout(() => {
         // 次のラウンド（画像）へ
@@ -116,6 +118,7 @@ export function Player() {
     updatePlayback,
     videoScheduler,
     settings.media.imageDuration,
+    settings.media.videoSeconds.fixed,
   ]);
 
   const handleNextRound = () => {
