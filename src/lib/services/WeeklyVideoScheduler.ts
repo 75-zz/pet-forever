@@ -23,6 +23,11 @@ export class WeeklyVideoScheduler {
    * 現在の週に対応する動画を取得
    */
   getCurrentVideo(date: Date = new Date()): VideoItem | null {
+    // 動画がない場合は null を返す
+    if (this.videos.length === 0) {
+      return null;
+    }
+
     // 動画が1つしかない場合は、それを返す
     if (this.videos.length === 1) {
       return this.videos[0];
@@ -32,10 +37,14 @@ export class WeeklyVideoScheduler {
     const videoId = this.schedule[weekNumber];
 
     if (!videoId) {
-      return null;
+      // スケジュールに割り当てられていない場合は、最初の動画を返す
+      return this.videos[0];
     }
 
-    return this.videos.find((v) => v.id === videoId) || null;
+    const video = this.videos.find((v) => v.id === videoId);
+
+    // スケジュールに割り当てられた動画が見つからない場合は、最初の動画を返す
+    return video || this.videos[0];
   }
 
   /**

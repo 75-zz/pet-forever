@@ -97,8 +97,12 @@ function VideoPlayer() {
 
   if (!playback.currentVideoId) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-black text-2xl">
-        動画が設定されていません
+      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+        <div className="text-center p-8">
+          <div className="text-4xl mb-4">📹</div>
+          <div className="text-gray-600 text-lg">動画がアップロードされていません</div>
+          <div className="text-gray-400 text-sm mt-2">メディアライブラリから動画を追加してください</div>
+        </div>
       </div>
     );
   }
@@ -126,8 +130,12 @@ function ImageSlide() {
 
   if (!playback.currentImages || playback.currentImages.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-black text-2xl">
-        画像が設定されていません
+      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+        <div className="text-center p-8">
+          <div className="text-4xl mb-4">🖼️</div>
+          <div className="text-gray-600 text-lg">画像がアップロードされていません</div>
+          <div className="text-gray-400 text-sm mt-2">メディアライブラリから画像を追加してください</div>
+        </div>
       </div>
     );
   }

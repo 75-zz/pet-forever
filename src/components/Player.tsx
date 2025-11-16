@@ -55,8 +55,17 @@ export function Player() {
         currentVideoId: currentVideo.src,
         currentRound: "video",
       });
+    } else if (images.length > 0) {
+      // 動画がない場合は画像から始める
+      const nextRound = roundConductor.nextRound(images);
+      if (nextRound.round === "image" && nextRound.images) {
+        updatePlayback({
+          currentRound: "image",
+          currentImages: nextRound.images,
+        });
+      }
     }
-  }, [videoScheduler, updatePlayback]);
+  }, [videoScheduler, updatePlayback, images, roundConductor, videos]);
 
   // 再生ロジック
   useEffect(() => {
@@ -92,6 +101,15 @@ export function Player() {
               currentRound: "video",
               currentVideoId: currentVideo.src,
             });
+          } else {
+            // 動画がない場合は、画像を続ける
+            const imageRound = roundConductor.nextRound(images);
+            if (imageRound.round === "image" && imageRound.images) {
+              updatePlayback({
+                currentRound: "image",
+                currentImages: imageRound.images,
+              });
+            }
           }
         } else if (nextRound.round === "image" && nextRound.images) {
           // まだ画像スロットが残っている場合
