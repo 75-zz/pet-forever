@@ -62,15 +62,14 @@ export function Player() {
     const nextVideo = videoScheduler.getCurrentVideo(nextWeekDate);
 
     if (nextVideo) {
-      // 再生を一時停止
-      updatePlayback({ isPlaying: false });
       setIsPreviewMode(true);
       setPreviewWeek(nextWeek);
 
-      // 次週の動画を表示
+      // 次週の動画を表示して再生
       updatePlayback({
         currentRound: "video",
         currentVideoId: nextVideo.src,
+        isPlaying: true,
       });
     }
   };
@@ -80,12 +79,13 @@ export function Player() {
     setIsPreviewMode(false);
     setPreviewWeek(null);
 
-    // 現在の週の動画に戻る
+    // 現在の週の動画に戻って再生
     const currentVideo = videoScheduler.getCurrentVideo();
     if (currentVideo) {
       updatePlayback({
         currentRound: "video",
         currentVideoId: currentVideo.src,
+        isPlaying: true,
       });
     }
   };
