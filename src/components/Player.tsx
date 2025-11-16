@@ -338,19 +338,22 @@ export function Player() {
             </button>
           )}
 
-          {/* プレビューモード中: 戻るボタン */}
+          {/* プレビューモード中: 次の動画ボタンと戻るボタン */}
           {isPreviewMode && (
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/30 text-blue-900 text-xs sm:text-sm rounded-full backdrop-blur-sm border border-blue-500/50">
-                📹 別の動画
-              </div>
+            <>
+              <button
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-900 text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-blue-500/40"
+                onClick={handlePreviewNextWeek}
+              >
+                📹 次の動画
+              </button>
               <button
                 className="px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
                 onClick={handleExitPreview}
               >
                 ← 戻る
               </button>
-            </div>
+            </>
           )}
         </div>
       </div>
