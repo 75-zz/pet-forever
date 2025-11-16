@@ -10,6 +10,8 @@ type PlanType = "starter" | "week2" | "week3" | null;
 
 export function Plan({ onClose }: PlanProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanType>(null);
+  // TODO: storeから現在のプランを取得
+  const currentPlan: PlanType = "starter"; // デフォルトはスタータープラン
 
   const plans = [
     {
@@ -18,8 +20,8 @@ export function Plan({ onClose }: PlanProps) {
       icon: "🌟",
       description: "基本的な機能をお試しください",
       features: [
-        "動画1本まで",
-        "画像無制限",
+        "週1回の動画",
+        "画像30パターン",
         "基本カレンダー機能",
       ],
     },
@@ -29,9 +31,9 @@ export function Plan({ onClose }: PlanProps) {
       icon: "⭐",
       description: "より多くの思い出を保存",
       features: [
-        "動画2本まで",
-        "画像無制限",
-        "週ごとの動画切り替え",
+        "週2回の動画",
+        "画像50パターン",
+        "過去の動画・画像アーカイブ視聴",
         "高度なカレンダー機能",
       ],
     },
@@ -41,9 +43,9 @@ export function Plan({ onClose }: PlanProps) {
       icon: "✨",
       description: "プレミアムな体験を",
       features: [
-        "動画3本まで",
-        "画像無制限",
-        "週ごとの動画切り替え",
+        "週3回の動画",
+        "画像70パターン",
+        "過去の動画・画像アーカイブ視聴",
         "すべての機能",
         "優先サポート",
       ],
@@ -72,25 +74,36 @@ export function Plan({ onClose }: PlanProps) {
 
         {/* プランカード */}
         <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {plans.map((plan) => (
-            <div
-              key={plan.id}
-              onClick={() => handleSelectPlan(plan.id)}
-              className={`
-                relative p-6 rounded-xl border-2 cursor-pointer transition-all
-                ${
-                  selectedPlan === plan.id
-                    ? "border-blue-500 bg-blue-50 shadow-lg"
-                    : "border-gray-200 hover:border-blue-300 hover:shadow-md"
-                }
-              `}
-            >
-              {/* 選択チェックマーク */}
-              {selectedPlan === plan.id && (
-                <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm">✓</span>
-                </div>
-              )}
+          {plans.map((plan) => {
+            const isCurrentPlan = currentPlan === plan.id;
+            return (
+              <div
+                key={plan.id}
+                onClick={() => handleSelectPlan(plan.id)}
+                className={`
+                  relative p-6 rounded-xl border-2 cursor-pointer transition-all
+                  ${
+                    selectedPlan === plan.id
+                      ? "border-blue-500 bg-blue-50 shadow-lg"
+                      : isCurrentPlan
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-blue-300 hover:shadow-md"
+                  }
+                `}
+              >
+                {/* 現在のプランバッジ */}
+                {isCurrentPlan && (
+                  <div className="absolute top-3 left-3 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                    現在のプラン
+                  </div>
+                )}
+
+                {/* 選択チェックマーク */}
+                {selectedPlan === plan.id && (
+                  <div className="absolute top-3 right-3 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">✓</span>
+                  </div>
+                )}
 
               {/* アイコン */}
               <div className="text-4xl mb-3">{plan.icon}</div>
@@ -116,7 +129,8 @@ export function Plan({ onClose }: PlanProps) {
                 ))}
               </ul>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* フッター（選択ボタン） */}
