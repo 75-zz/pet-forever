@@ -22,6 +22,8 @@ export function Player() {
   const [showSettings, setShowSettings] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewWeek, setPreviewWeek] = useState<number | null>(null);
 
   // サービスインスタンスを作成
   const calendarService = useMemo(
@@ -47,6 +49,47 @@ export function Player() {
   const videoTimeoutRef = useRef<NodeJS.Timeout>();
   const imageTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // 次週の動画をプレビューする関数
+  const handlePreviewNextWeek = () => {
+    // 現在の週番号を取得
+    const currentWeek = calendarService.getWeekNumberOfMonth(new Date());
+    // 次の週番号を計算（1-4でループ）
+    const nextWeek = currentWeek >= 4 ? 1 : currentWeek + 1;
+
+    // 次週の動画を取得
+    const nextWeekDate = new Date();
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7); // 1週間後の日付
+    const nextVideo = videoScheduler.getCurrentVideo(nextWeekDate);
+
+    if (nextVideo) {
+      // 再生を一時停止
+      updatePlayback({ isPlaying: false });
+      setIsPreviewMode(true);
+      setPreviewWeek(nextWeek);
+
+      // 次週の動画を表示
+      updatePlayback({
+        currentRound: "video",
+        currentVideoId: nextVideo.src,
+      });
+    }
+  };
+
+  // プレビューを終了して通常再生に戻る
+  const handleExitPreview = () => {
+    setIsPreviewMode(false);
+    setPreviewWeek(null);
+
+    // 現在の週の動画に戻る
+    const currentVideo = videoScheduler.getCurrentVideo();
+    if (currentVideo) {
+      updatePlayback({
+        currentRound: "video",
+        currentVideoId: currentVideo.src,
+      });
+    }
+  };
+
   // 初期化: 現在の週の動画を取得
   useEffect(() => {
     const currentVideo = videoScheduler.getCurrentVideo();
@@ -69,6 +112,8 @@ export function Player() {
 
   // 再生ロジック
   useEffect(() => {
+    // プレビューモード中は自動再生しない
+    if (isPreviewMode) return;
     if (!playback.isPlaying) return;
 
     if (playback.currentRound === "video") {
@@ -126,6 +171,7 @@ export function Player() {
       if (imageTimeoutRef.current) clearTimeout(imageTimeoutRef.current);
     };
   }, [
+    isPreviewMode,
     playback.currentRound,
     playback.isPlaying,
     playback.currentVideoDuration,
@@ -264,13 +310,43 @@ export function Player() {
           )}
         </div>
 
-        {/* 再生/停止ボタン */}
-        <button
-          className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
-          onClick={() => updatePlayback({ isPlaying: !playback.isPlaying })}
-        >
-          {playback.isPlaying ? "⏸ 停止" : "▶ 再生"}
-        </button>
+        {/* コントロールボタン群 */}
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-2">
+          {/* 再生/停止ボタン */}
+          {!isPreviewMode && (
+            <button
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
+              onClick={() => updatePlayback({ isPlaying: !playback.isPlaying })}
+            >
+              {playback.isPlaying ? "⏸ 停止" : "▶ 再生"}
+            </button>
+          )}
+
+          {/* 次週の動画を見るボタン */}
+          {!isPreviewMode && videos.length > 0 && (
+            <button
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-900 text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-blue-500/40"
+              onClick={handlePreviewNextWeek}
+            >
+              📅 次週の動画
+            </button>
+          )}
+
+          {/* プレビューモード中: 戻るボタン */}
+          {isPreviewMode && (
+            <div className="flex items-center gap-2">
+              <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/30 text-blue-900 text-xs sm:text-sm rounded-full backdrop-blur-sm border border-blue-500/50">
+                第{previewWeek}週の動画
+              </div>
+              <button
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
+                onClick={handleExitPreview}
+              >
+                ← 戻る
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 設定パネル */}
