@@ -177,9 +177,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
     videoSeconds: {
       min: 10,
       max: 20,
+      fixed: 8,
     },
     imageSlots: 3,
-    imageDuration: 7,
+    imageDuration: 5,
     randomRotation: false,
     randomPosition: false,
     randomScale: false,
