@@ -49,20 +49,21 @@ export function Player() {
   const videoTimeoutRef = useRef<NodeJS.Timeout>();
   const imageTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // 次の動画を再生する関数
+  // 次の動画を再生する関数（連番順）
   const handlePreviewNextWeek = () => {
     if (videos.length === 0) return;
 
-    // 現在再生中の動画を取得
+    // 現在再生中の動画のインデックスを取得
     const currentVideoId = playback.currentVideoId;
+    const currentIndex = videos.findIndex(v => v.src === currentVideoId);
 
-    // 現在の動画以外の動画を探す
-    let nextVideo = videos.find(v => v.src !== currentVideoId);
-
-    // 見つからない場合（動画が1つしかない場合）は、その動画を再生
-    if (!nextVideo && videos.length > 0) {
-      nextVideo = videos[0];
+    // 次のインデックスを計算（最後に達したら最初に戻る）
+    let nextIndex = 0;
+    if (currentIndex !== -1) {
+      nextIndex = (currentIndex + 1) % videos.length;
     }
+
+    const nextVideo = videos[nextIndex];
 
     if (nextVideo) {
       // プレビューモードを有効化
