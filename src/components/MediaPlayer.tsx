@@ -57,6 +57,23 @@ function VideoPlayer() {
   const settings = useAppStore((state) => state.settings);
   const updatePlayback = useAppStore((state) => state.updatePlayback);
 
+  // 動画IDが変わったときに再読み込み
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // 動画を再読み込み
+    video.load();
+
+    // 再生中の場合は自動再生
+    if (playback.isPlaying) {
+      video.play().catch(err => {
+        console.error('Video play failed:', err);
+      });
+    }
+  }, [playback.currentVideoId, playback.isPlaying]);
+
+  // 音量と再生状態の制御
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
