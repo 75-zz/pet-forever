@@ -51,25 +51,29 @@ export function Player() {
 
   // 次週の動画をプレビューする関数
   const handlePreviewNextWeek = () => {
+    if (videos.length === 0) return;
+
     // 現在の週番号を取得
     const currentWeek = calendarService.getWeekNumberOfMonth(new Date());
     // 次の週番号を計算（1-4でループ）
     const nextWeek = currentWeek >= 4 ? 1 : currentWeek + 1;
 
-    // 次週の動画を取得
-    const nextWeekDate = new Date();
-    nextWeekDate.setDate(nextWeekDate.getDate() + 7); // 1週間後の日付
-    const nextVideo = videoScheduler.getCurrentVideo(nextWeekDate);
+    // 次週の動画を週番号から直接取得
+    const nextVideo = videoScheduler.getVideoForWeek(nextWeek);
 
-    if (nextVideo) {
+    // 次週に割り当てられた動画がない場合は、最初の動画を使用
+    const videoToPlay = nextVideo || videos[0];
+
+    if (videoToPlay) {
       setIsPreviewMode(true);
       setPreviewWeek(nextWeek);
 
       // 次週の動画を表示して再生
       updatePlayback({
         currentRound: "video",
-        currentVideoId: nextVideo.src,
+        currentVideoId: videoToPlay.src,
         isPlaying: true,
+        currentVideoDuration: undefined, // 新しい動画なので長さをリセット
       });
     }
   };
@@ -86,6 +90,7 @@ export function Player() {
         currentRound: "video",
         currentVideoId: currentVideo.src,
         isPlaying: true,
+        currentVideoDuration: undefined, // 動画が変わるので長さをリセット
       });
     }
   };
