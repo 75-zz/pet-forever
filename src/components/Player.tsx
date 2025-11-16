@@ -6,6 +6,7 @@ import { Calendar } from "./Calendar";
 import { MediaPlayer } from "./MediaPlayer";
 import { MediaLibrary } from "./MediaLibrary";
 import { Settings } from "./Settings";
+import { Plan } from "./Plan";
 import { CalendarService } from "@/lib/services/CalendarService";
 import { WeeklyVideoScheduler } from "@/lib/services/WeeklyVideoScheduler";
 import { DiversityPicker } from "@/lib/services/DiversityPicker";
@@ -21,6 +22,7 @@ export function Player() {
 
   const [showSettings, setShowSettings] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [showPlan, setShowPlan] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
   // サービスインスタンスを作成
@@ -270,7 +272,7 @@ export function Player() {
 
           {/* メニュードロップダウン */}
           {showMenu && (
-            <div className="absolute top-12 sm:top-14 right-0 bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden min-w-[160px] sm:min-w-[180px] border border-white/30">
+            <div className="absolute top-12 sm:top-14 right-0 bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden min-w-[200px] sm:min-w-[220px] border border-white/30">
               <button
                 className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900"
                 onClick={() => {
@@ -279,7 +281,7 @@ export function Player() {
                 }}
               >
                 <span className="text-sm sm:text-base">📁</span>
-                <span className="text-xs sm:text-sm font-medium">メディアライブラリ</span>
+                <span className="text-xs sm:text-sm font-medium whitespace-nowrap">メディアライブラリ</span>
               </button>
               <button
                 className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
@@ -290,6 +292,16 @@ export function Player() {
               >
                 <span className="text-sm sm:text-base">⚙️</span>
                 <span className="text-xs sm:text-sm font-medium">設定</span>
+              </button>
+              <button
+                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
+                onClick={() => {
+                  setShowPlan(true);
+                  setShowMenu(false);
+                }}
+              >
+                <span className="text-sm sm:text-base">📋</span>
+                <span className="text-xs sm:text-sm font-medium">プラン</span>
               </button>
             </div>
           )}
@@ -324,6 +336,9 @@ export function Player() {
       {showMediaLibrary && (
         <MediaLibrary onClose={() => setShowMediaLibrary(false)} />
       )}
+
+      {/* プラン選択 */}
+      {showPlan && <Plan onClose={() => setShowPlan(false)} />}
     </div>
   );
 }
