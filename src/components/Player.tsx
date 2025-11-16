@@ -49,29 +49,30 @@ export function Player() {
   const videoTimeoutRef = useRef<NodeJS.Timeout>();
   const imageTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // 次週の動画をプレビューする関数
+  // 次の動画を再生する関数
   const handlePreviewNextWeek = () => {
     if (videos.length === 0) return;
 
-    // 現在の週番号を取得
-    const currentWeek = calendarService.getWeekNumberOfMonth(new Date());
-    // 次の週番号を計算（1-4でループ）
-    const nextWeek = currentWeek >= 4 ? 1 : currentWeek + 1;
+    // 現在再生中の動画を取得
+    const currentVideoId = playback.currentVideoId;
 
-    // 次週の動画を週番号から直接取得
-    const nextVideo = videoScheduler.getVideoForWeek(nextWeek);
+    // 現在の動画以外の動画を探す
+    let nextVideo = videos.find(v => v.src !== currentVideoId);
 
-    // 次週に割り当てられた動画がない場合は、最初の動画を使用
-    const videoToPlay = nextVideo || videos[0];
+    // 見つからない場合（動画が1つしかない場合）は、その動画を再生
+    if (!nextVideo && videos.length > 0) {
+      nextVideo = videos[0];
+    }
 
-    if (videoToPlay) {
+    if (nextVideo) {
+      // プレビューモードを有効化
       setIsPreviewMode(true);
-      setPreviewWeek(nextWeek);
+      setPreviewWeek(null); // 週番号は表示しない
 
-      // 次週の動画を表示して再生
+      // 次の動画を表示して即座に再生
       updatePlayback({
         currentRound: "video",
-        currentVideoId: videoToPlay.src,
+        currentVideoId: nextVideo.src,
         isPlaying: true,
         currentVideoDuration: undefined, // 新しい動画なので長さをリセット
       });
@@ -341,7 +342,7 @@ export function Player() {
           {isPreviewMode && (
             <div className="flex items-center gap-2">
               <div className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-500/30 text-blue-900 text-xs sm:text-sm rounded-full backdrop-blur-sm border border-blue-500/50">
-                第{previewWeek}週の動画
+                📹 別の動画
               </div>
               <button
                 className="px-3 py-1.5 sm:px-4 sm:py-2 bg-black/10 hover:bg-black/20 text-black text-xs sm:text-sm rounded-full backdrop-blur-sm transition-colors border border-black/20"
