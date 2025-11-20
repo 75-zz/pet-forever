@@ -225,7 +225,8 @@ function mergeSettings(
       textColor: stored.calendar?.textColor ?? defaults.calendar.textColor,
       size: stored.calendar?.size ?? defaults.calendar.size,
       useCustomPosition: stored.calendar?.useCustomPosition ?? defaults.calendar.useCustomPosition,
-      customPosition: stored.calendar?.customPosition ?? defaults.calendar.customPosition,
+      customPositionDay: stored.calendar?.customPositionDay ?? defaults.calendar.customPositionDay,
+      customPositionMonth: stored.calendar?.customPositionMonth ?? defaults.calendar.customPositionMonth,
       isDraggable: stored.calendar?.isDraggable ?? defaults.calendar.isDraggable,
     },
     media: {

@@ -38,7 +38,7 @@ export function Calendar() {
 /**
  * ドラッグ可能なカレンダー用カスタムフック
  */
-function useDraggable(isDraggable: boolean) {
+function useDraggable(isDraggable: boolean, mode: "day" | "month") {
   const updateSettings = useAppStore((state) => state.updateSettings);
   const settings = useAppStore((state) => state.settings);
   const { calendar } = settings;
@@ -48,6 +48,11 @@ function useDraggable(isDraggable: boolean) {
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasDraggedRef = useRef(false);
   const elementRef = useRef<HTMLDivElement>(null);
+
+  // 現在のモードに応じた位置を取得
+  const currentPosition = mode === "day"
+    ? calendar.customPositionDay
+    : calendar.customPositionMonth;
 
   // ドラッグ開始
   const handleDragStart = (clientX: number, clientY: number) => {
@@ -103,14 +108,24 @@ function useDraggable(isDraggable: boolean) {
       const boundedX = Math.max(0, Math.min(newX, maxX));
       const boundedY = Math.max(0, Math.min(newY, maxY));
 
-      // 位置を更新
-      updateSettings({
-        calendar: {
-          ...calendar,
-          useCustomPosition: true,
-          customPosition: { x: boundedX, y: boundedY },
-        },
-      });
+      // モードに応じた位置を更新
+      if (mode === "day") {
+        updateSettings({
+          calendar: {
+            ...calendar,
+            useCustomPosition: true,
+            customPositionDay: { x: boundedX, y: boundedY },
+          },
+        });
+      } else {
+        updateSettings({
+          calendar: {
+            ...calendar,
+            useCustomPosition: true,
+            customPositionMonth: { x: boundedX, y: boundedY },
+          },
+        });
+      }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -172,7 +187,7 @@ function DayCalendar({
     handleMouseDown,
     handleTouchStart,
     handleTouchEnd,
-  } = useDraggable(calendar.isDraggable);
+  } = useDraggable(calendar.isDraggable, "day");
 
   // カスタム位置使用時、画面外にはみ出している場合のみ調整
   useEffect(() => {
@@ -196,8 +211,8 @@ function DayCalendar({
         const maxX = window.innerWidth - rect.width;
         const maxY = window.innerHeight - rect.height;
 
-        const currentX = calendar.customPosition.x;
-        const currentY = calendar.customPosition.y;
+        const currentX = calendar.customPositionDay.x;
+        const currentY = calendar.customPositionDay.y;
 
         const boundedX = Math.max(0, Math.min(currentX, maxX));
         const boundedY = Math.max(0, Math.min(currentY, maxY));
@@ -205,7 +220,7 @@ function DayCalendar({
         updateSettings({
           calendar: {
             ...calendar,
-            customPosition: { x: boundedX, y: boundedY },
+            customPositionDay: { x: boundedX, y: boundedY },
           },
         });
       }
@@ -258,7 +273,7 @@ function DayCalendar({
   const sizes = sizeClasses[calendar.size];
 
   const positionStyle = calendar.useCustomPosition
-    ? { left: calendar.customPosition.x, top: calendar.customPosition.y }
+    ? { left: calendar.customPositionDay.x, top: calendar.customPositionDay.y }
     : {};
 
   return (
@@ -319,7 +334,7 @@ function MonthCalendar({
     handleMouseDown,
     handleTouchStart,
     handleTouchEnd,
-  } = useDraggable(calendar.isDraggable);
+  } = useDraggable(calendar.isDraggable, "month");
 
   // カスタム位置使用時、画面外にはみ出している場合のみ調整
   useEffect(() => {
@@ -343,8 +358,8 @@ function MonthCalendar({
         const maxX = window.innerWidth - rect.width;
         const maxY = window.innerHeight - rect.height;
 
-        const currentX = calendar.customPosition.x;
-        const currentY = calendar.customPosition.y;
+        const currentX = calendar.customPositionMonth.x;
+        const currentY = calendar.customPositionMonth.y;
 
         const boundedX = Math.max(0, Math.min(currentX, maxX));
         const boundedY = Math.max(0, Math.min(currentY, maxY));
@@ -352,7 +367,7 @@ function MonthCalendar({
         updateSettings({
           calendar: {
             ...calendar,
-            customPosition: { x: boundedX, y: boundedY },
+            customPositionMonth: { x: boundedX, y: boundedY },
           },
         });
       }
@@ -424,7 +439,7 @@ function MonthCalendar({
   const sizes = sizeClasses[calendar.size];
 
   const positionStyle = calendar.useCustomPosition
-    ? { left: calendar.customPosition.x, top: calendar.customPosition.y }
+    ? { left: calendar.customPositionMonth.x, top: calendar.customPositionMonth.y }
     : {};
 
   return (

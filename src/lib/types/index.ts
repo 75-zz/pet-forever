@@ -51,7 +51,8 @@ export interface CalendarSettings {
   textColor: string; // カレンダーの文字色
   size: CalendarSize; // 文字サイズ（小・中・大）
   useCustomPosition: boolean; // カスタム位置を使用するか
-  customPosition: { x: number; y: number }; // カスタム位置（ピクセル座標）
+  customPositionDay: { x: number; y: number }; // 1日表示のカスタム位置
+  customPositionMonth: { x: number; y: number }; // 1か月表示のカスタム位置
   isDraggable: boolean; // ドラッグ可能かどうか
 }
 
@@ -176,7 +177,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
     textColor: "#000000",
     size: "medium",
     useCustomPosition: false,
-    customPosition: { x: 32, y: 32 },
+    customPositionDay: { x: 32, y: 32 },
+    customPositionMonth: { x: 32, y: 32 },
     isDraggable: true,
   },
   media: {
