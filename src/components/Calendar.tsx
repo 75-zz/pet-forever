@@ -174,27 +174,34 @@ function DayCalendar({
     handleTouchEnd,
   } = useDraggable(calendar.isDraggable);
 
-  // カスタム位置使用時、画面内に収まるように調整
+  // カスタム位置使用時、画面外にはみ出している場合のみ調整
   useEffect(() => {
     if (!calendar.useCustomPosition || !elementRef.current) return;
 
-    // requestAnimationFrameで次のフレームまで待つ（要素サイズが確定するまで）
+    // 次のフレームまで待つ（要素サイズが確定するまで）
     const timeoutId = setTimeout(() => {
       if (!elementRef.current) return;
 
       const element = elementRef.current;
       const rect = element.getBoundingClientRect();
-      const maxX = window.innerWidth - rect.width;
-      const maxY = window.innerHeight - rect.height;
 
-      const currentX = calendar.customPosition.x;
-      const currentY = calendar.customPosition.y;
+      // 画面外にはみ出しているかチェック
+      const isOutOfBoundsRight = rect.right > window.innerWidth;
+      const isOutOfBoundsBottom = rect.bottom > window.innerHeight;
+      const isOutOfBoundsLeft = rect.left < 0;
+      const isOutOfBoundsTop = rect.top < 0;
 
-      const boundedX = Math.max(0, Math.min(currentX, maxX));
-      const boundedY = Math.max(0, Math.min(currentY, maxY));
+      // はみ出している場合のみ調整
+      if (isOutOfBoundsRight || isOutOfBoundsBottom || isOutOfBoundsLeft || isOutOfBoundsTop) {
+        const maxX = window.innerWidth - rect.width;
+        const maxY = window.innerHeight - rect.height;
 
-      // 位置が変わった場合のみ更新
-      if (boundedX !== currentX || boundedY !== currentY) {
+        const currentX = calendar.customPosition.x;
+        const currentY = calendar.customPosition.y;
+
+        const boundedX = Math.max(0, Math.min(currentX, maxX));
+        const boundedY = Math.max(0, Math.min(currentY, maxY));
+
         updateSettings({
           calendar: {
             ...calendar,
@@ -314,27 +321,34 @@ function MonthCalendar({
     handleTouchEnd,
   } = useDraggable(calendar.isDraggable);
 
-  // カスタム位置使用時、画面内に収まるように調整
+  // カスタム位置使用時、画面外にはみ出している場合のみ調整
   useEffect(() => {
     if (!calendar.useCustomPosition || !elementRef.current) return;
 
-    // requestAnimationFrameで次のフレームまで待つ（要素サイズが確定するまで）
+    // 次のフレームまで待つ（要素サイズが確定するまで）
     const timeoutId = setTimeout(() => {
       if (!elementRef.current) return;
 
       const element = elementRef.current;
       const rect = element.getBoundingClientRect();
-      const maxX = window.innerWidth - rect.width;
-      const maxY = window.innerHeight - rect.height;
 
-      const currentX = calendar.customPosition.x;
-      const currentY = calendar.customPosition.y;
+      // 画面外にはみ出しているかチェック
+      const isOutOfBoundsRight = rect.right > window.innerWidth;
+      const isOutOfBoundsBottom = rect.bottom > window.innerHeight;
+      const isOutOfBoundsLeft = rect.left < 0;
+      const isOutOfBoundsTop = rect.top < 0;
 
-      const boundedX = Math.max(0, Math.min(currentX, maxX));
-      const boundedY = Math.max(0, Math.min(currentY, maxY));
+      // はみ出している場合のみ調整
+      if (isOutOfBoundsRight || isOutOfBoundsBottom || isOutOfBoundsLeft || isOutOfBoundsTop) {
+        const maxX = window.innerWidth - rect.width;
+        const maxY = window.innerHeight - rect.height;
 
-      // 位置が変わった場合のみ更新
-      if (boundedX !== currentX || boundedY !== currentY) {
+        const currentX = calendar.customPosition.x;
+        const currentY = calendar.customPosition.y;
+
+        const boundedX = Math.max(0, Math.min(currentX, maxX));
+        const boundedY = Math.max(0, Math.min(currentY, maxY));
+
         updateSettings({
           calendar: {
             ...calendar,
