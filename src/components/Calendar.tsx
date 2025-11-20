@@ -174,6 +174,40 @@ function DayCalendar({
     handleTouchEnd,
   } = useDraggable(calendar.isDraggable);
 
+  // カスタム位置使用時、画面内に収まるように調整
+  useEffect(() => {
+    if (!calendar.useCustomPosition || !elementRef.current) return;
+
+    // requestAnimationFrameで次のフレームまで待つ（要素サイズが確定するまで）
+    const timeoutId = setTimeout(() => {
+      if (!elementRef.current) return;
+
+      const element = elementRef.current;
+      const rect = element.getBoundingClientRect();
+      const maxX = window.innerWidth - rect.width;
+      const maxY = window.innerHeight - rect.height;
+
+      const currentX = calendar.customPosition.x;
+      const currentY = calendar.customPosition.y;
+
+      const boundedX = Math.max(0, Math.min(currentX, maxX));
+      const boundedY = Math.max(0, Math.min(currentY, maxY));
+
+      // 位置が変わった場合のみ更新
+      if (boundedX !== currentX || boundedY !== currentY) {
+        updateSettings({
+          calendar: {
+            ...calendar,
+            customPosition: { x: boundedX, y: boundedY },
+          },
+        });
+      }
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calendar.mode, calendar.size]);
+
   const dateStr = service.formatDate(date, "M/d", calendar.showYear);
   const weekday = calendar.showWeekday ? service.getWeekdayName(date) : "";
   const anniversary = service.isAnniversary(date, settings.anniversaries);
@@ -279,6 +313,40 @@ function MonthCalendar({
     handleTouchStart,
     handleTouchEnd,
   } = useDraggable(calendar.isDraggable);
+
+  // カスタム位置使用時、画面内に収まるように調整
+  useEffect(() => {
+    if (!calendar.useCustomPosition || !elementRef.current) return;
+
+    // requestAnimationFrameで次のフレームまで待つ（要素サイズが確定するまで）
+    const timeoutId = setTimeout(() => {
+      if (!elementRef.current) return;
+
+      const element = elementRef.current;
+      const rect = element.getBoundingClientRect();
+      const maxX = window.innerWidth - rect.width;
+      const maxY = window.innerHeight - rect.height;
+
+      const currentX = calendar.customPosition.x;
+      const currentY = calendar.customPosition.y;
+
+      const boundedX = Math.max(0, Math.min(currentX, maxX));
+      const boundedY = Math.max(0, Math.min(currentY, maxY));
+
+      // 位置が変わった場合のみ更新
+      if (boundedX !== currentX || boundedY !== currentY) {
+        updateSettings({
+          calendar: {
+            ...calendar,
+            customPosition: { x: boundedX, y: boundedY },
+          },
+        });
+      }
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calendar.mode, calendar.size]);
 
   const grid = service.getMonthCalendarGrid(date);
   const weekdayLabels =
