@@ -218,21 +218,6 @@ export function Player() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [playback.isPlaying, updatePlayback]);
 
-  // メニュー外クリックで閉じる
-  useEffect(() => {
-    if (!showMenu) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('[data-menu-container]')) {
-        setShowMenu(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showMenu]);
-
   return (
     <div
       className="relative w-screen h-screen overflow-hidden bg-white"
@@ -249,8 +234,8 @@ export function Player() {
 
       {/* コントロールレイヤー */}
       <div className="absolute inset-0 z-controls pointer-events-none">
-        {/* ハンバーガーメニュー */}
-        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 pointer-events-auto" data-menu-container>
+        {/* ハンバーガーメニューボタン */}
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 pointer-events-auto">
           <button
             className="w-10 h-10 sm:w-12 sm:h-12 bg-black/10 hover:bg-black/20 text-black rounded-full backdrop-blur-sm transition-all border border-black/20 flex items-center justify-center"
             onClick={() => setShowMenu(!showMenu)}
@@ -269,45 +254,6 @@ export function Player() {
               />
             </svg>
           </button>
-
-          {/* メニュードロップダウン */}
-          {showMenu && (
-            <div className="absolute top-12 sm:top-14 right-0 bg-white/20 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden min-w-[200px] sm:min-w-[220px] border border-white/30">
-              <button
-                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900"
-                onClick={() => {
-                  setShowMediaLibrary(true);
-                  setShowMenu(false);
-                }}
-              >
-                <span className="text-sm sm:text-base">📁</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-medium whitespace-nowrap">メディアライブラリ</span>
-                  <span className="px-1.5 py-0.5 text-[10px] bg-orange-500 text-white rounded font-bold">開発中</span>
-                </div>
-              </button>
-              <button
-                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
-                onClick={() => {
-                  setShowSettings(true);
-                  setShowMenu(false);
-                }}
-              >
-                <span className="text-sm sm:text-base">⚙️</span>
-                <span className="text-xs sm:text-sm font-medium">設定</span>
-              </button>
-              <button
-                className="w-full px-2.5 py-1.5 sm:px-3 sm:py-2 text-left hover:bg-white/10 transition-colors flex items-center gap-2 text-gray-900 border-t border-white/20"
-                onClick={() => {
-                  setShowPlan(true);
-                  setShowMenu(false);
-                }}
-              >
-                <span className="text-sm sm:text-base">📋</span>
-                <span className="text-xs sm:text-sm font-medium">プラン</span>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* コントロールボタン群 */}
@@ -331,6 +277,96 @@ export function Player() {
           )}
         </div>
       </div>
+
+      {/* サイドメニュー */}
+      <>
+        {/* オーバーレイ */}
+        <div
+          className={`fixed inset-0 z-[250] bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+            showMenu ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+          onClick={() => setShowMenu(false)}
+        />
+
+        {/* スライドメニュー */}
+        <div
+          className={`fixed top-0 right-0 h-full z-[260] w-72 sm:w-80 bg-white/20 backdrop-blur-xl shadow-2xl border-l border-white/30 transform transition-transform duration-300 ease-out ${
+            showMenu ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          data-menu-container
+        >
+            {/* メニューヘッダー */}
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/30">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">メニュー</h2>
+              <button
+                onClick={() => setShowMenu(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors text-gray-700"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* メニューアイテム */}
+            <div className="flex flex-col">
+              <button
+                className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left hover:bg-white/20 transition-colors flex items-center gap-3 border-b border-white/20"
+                onClick={() => {
+                  setShowMediaLibrary(true);
+                  setShowMenu(false);
+                }}
+              >
+                <span className="text-2xl">📁</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm sm:text-base font-medium text-gray-900">メディアライブラリ</span>
+                    <span className="px-2 py-0.5 text-[10px] bg-orange-500 text-white rounded-full font-bold">開発中</span>
+                  </div>
+                  <p className="text-xs text-gray-700 mt-1">画像・動画を管理</p>
+                </div>
+              </button>
+
+              <button
+                className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left hover:bg-white/20 transition-colors flex items-center gap-3 border-b border-white/20"
+                onClick={() => {
+                  setShowSettings(true);
+                  setShowMenu(false);
+                }}
+              >
+                <span className="text-2xl">⚙️</span>
+                <div className="flex-1">
+                  <span className="text-sm sm:text-base font-medium text-gray-900">設定</span>
+                  <p className="text-xs text-gray-700 mt-1">カレンダー・メディア設定</p>
+                </div>
+              </button>
+
+              <button
+                className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left hover:bg-white/20 transition-colors flex items-center gap-3 border-b border-white/20"
+                onClick={() => {
+                  setShowPlan(true);
+                  setShowMenu(false);
+                }}
+              >
+                <span className="text-2xl">📋</span>
+                <div className="flex-1">
+                  <span className="text-sm sm:text-base font-medium text-gray-900">プラン</span>
+                  <p className="text-xs text-gray-700 mt-1">プラン選択</p>
+                </div>
+              </button>
+            </div>
+          </div>
+      </>
 
       {/* 設定パネル */}
       {showSettings && <Settings onClose={() => setShowSettings(false)} />}

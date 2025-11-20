@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { useAppStore } from "@/lib/stores/useAppStore";
 import { CalendarService } from "@/lib/services/CalendarService";
 import type { CalendarPosition } from "@/lib/types";
@@ -36,6 +36,122 @@ export function Calendar() {
 }
 
 /**
+ * ドラッグ可能なカレンダー用カスタムフック
+ */
+function useDraggable(isDraggable: boolean) {
+  const updateSettings = useAppStore((state) => state.updateSettings);
+  const settings = useAppStore((state) => state.settings);
+  const { calendar } = settings;
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasDraggedRef = useRef(false);
+  const elementRef = useRef<HTMLDivElement>(null);
+
+  // ドラッグ開始
+  const handleDragStart = (clientX: number, clientY: number) => {
+    if (!isDraggable || !elementRef.current) return;
+
+    const rect = elementRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    });
+    setIsDragging(true);
+    hasDraggedRef.current = false;
+  };
+
+  // マウスダウン
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isDraggable) return;
+    e.preventDefault();
+    handleDragStart(e.clientX, e.clientY);
+  };
+
+  // タッチスタート（長押し判定）
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isDraggable) return;
+    const touch = e.touches[0];
+
+    longPressTimerRef.current = setTimeout(() => {
+      handleDragStart(touch.clientX, touch.clientY);
+    }, 500); // 500ms長押しでドラッグ開始
+  };
+
+  // タッチエンド（長押しキャンセル）
+  const handleTouchEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  // ドラッグ中の移動
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMove = (clientX: number, clientY: number) => {
+      hasDraggedRef.current = true;
+      const newX = clientX - dragOffset.x;
+      const newY = clientY - dragOffset.y;
+
+      // 画面外に出ないように制限
+      const maxX = window.innerWidth - (elementRef.current?.offsetWidth || 0);
+      const maxY = window.innerHeight - (elementRef.current?.offsetHeight || 0);
+
+      const boundedX = Math.max(0, Math.min(newX, maxX));
+      const boundedY = Math.max(0, Math.min(newY, maxY));
+
+      // 位置を更新
+      updateSettings({
+        calendar: {
+          ...calendar,
+          useCustomPosition: true,
+          customPosition: { x: boundedX, y: boundedY },
+        },
+      });
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      e.preventDefault();
+      handleMove(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleMove(touch.clientX, touch.clientY);
+    };
+
+    const handleEnd = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleEnd);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
+    };
+  }, [isDragging, dragOffset, calendar, updateSettings]);
+
+  return {
+    elementRef,
+    isDragging,
+    hasDragged: hasDraggedRef.current,
+    handleMouseDown,
+    handleTouchStart,
+    handleTouchEnd,
+  };
+}
+
+/**
  * 1日表示カレンダー
  */
 function DayCalendar({
@@ -49,15 +165,29 @@ function DayCalendar({
   const updateSettings = useAppStore((state) => state.updateSettings);
   const { calendar } = settings;
 
+  const {
+    elementRef,
+    isDragging,
+    hasDragged,
+    handleMouseDown,
+    handleTouchStart,
+    handleTouchEnd,
+  } = useDraggable(calendar.isDraggable);
+
   const dateStr = service.formatDate(date, "M/d", calendar.showYear);
   const weekday = calendar.showWeekday ? service.getWeekdayName(date) : "";
   const anniversary = service.isAnniversary(date, settings.anniversaries);
 
-  const positionClass = POSITION_CLASSES[calendar.position];
+  const positionClass = calendar.useCustomPosition
+    ? ""
+    : POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
   // カレンダーモードを切り替える
   const toggleCalendarMode = () => {
+    // ドラッグ中またはドラッグした直後は切り替えない
+    if (isDragging || hasDragged) return;
+
     updateSettings({
       calendar: {
         ...calendar,
@@ -86,14 +216,25 @@ function DayCalendar({
   };
   const sizes = sizeClasses[calendar.size];
 
+  const positionStyle = calendar.useCustomPosition
+    ? { left: calendar.customPosition.x, top: calendar.customPosition.y }
+    : {};
+
   return (
     <div
-      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto`}
+      ref={elementRef}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} ${
+        calendar.isDraggable ? "cursor-move" : "cursor-pointer"
+      } pointer-events-auto ${isDragging ? "opacity-70" : ""}`}
       style={{
         color: calendar.textColor,
         textShadow: "0 1px 3px rgba(0, 0, 0, 0.15)",
+        ...positionStyle,
       }}
       onClick={toggleCalendarMode}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex={0}
       aria-label="カレンダー表示を切り替え"
@@ -130,6 +271,15 @@ function MonthCalendar({
   const updateSettings = useAppStore((state) => state.updateSettings);
   const { calendar } = settings;
 
+  const {
+    elementRef,
+    isDragging,
+    hasDragged,
+    handleMouseDown,
+    handleTouchStart,
+    handleTouchEnd,
+  } = useDraggable(calendar.isDraggable);
+
   const grid = service.getMonthCalendarGrid(date);
   const weekdayLabels =
     calendar.locale === "ja"
@@ -144,11 +294,16 @@ function MonthCalendar({
 
   const monthYear = service.formatDate(date, "yyyy年M月", calendar.showYear);
 
-  const positionClass = POSITION_CLASSES[calendar.position];
+  const positionClass = calendar.useCustomPosition
+    ? ""
+    : POSITION_CLASSES[calendar.position];
   const fontClass = `font-${calendar.font}`;
 
   // カレンダーモードを切り替える
   const toggleCalendarMode = () => {
+    // ドラッグ中またはドラッグした直後は切り替えない
+    if (isDragging || hasDragged) return;
+
     updateSettings({
       calendar: {
         ...calendar,
@@ -186,11 +341,23 @@ function MonthCalendar({
   };
   const sizes = sizeClasses[calendar.size];
 
+  const positionStyle = calendar.useCustomPosition
+    ? { left: calendar.customPosition.x, top: calendar.customPosition.y }
+    : {};
+
   return (
     <div
-      className={`fixed z-calendar ${positionClass} select-none ${fontClass} cursor-pointer pointer-events-auto max-h-screen flex items-center`}
-      style={{ color: calendar.textColor }}
+      ref={elementRef}
+      className={`fixed z-calendar ${positionClass} select-none ${fontClass} ${
+        calendar.isDraggable ? "cursor-move" : "cursor-pointer"
+      } pointer-events-auto max-h-screen flex items-center ${
+        isDragging ? "opacity-70" : ""
+      }`}
+      style={{ color: calendar.textColor, ...positionStyle }}
       onClick={toggleCalendarMode}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       role="button"
       tabIndex={0}
       aria-label="カレンダー表示を切り替え"

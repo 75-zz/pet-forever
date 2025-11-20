@@ -224,6 +224,9 @@ function mergeSettings(
       font: stored.calendar?.font ?? defaults.calendar.font,
       textColor: stored.calendar?.textColor ?? defaults.calendar.textColor,
       size: stored.calendar?.size ?? defaults.calendar.size,
+      useCustomPosition: stored.calendar?.useCustomPosition ?? defaults.calendar.useCustomPosition,
+      customPosition: stored.calendar?.customPosition ?? defaults.calendar.customPosition,
+      isDraggable: stored.calendar?.isDraggable ?? defaults.calendar.isDraggable,
     },
     media: {
       videoSeconds: stored.media?.videoSeconds ?? defaults.media.videoSeconds,

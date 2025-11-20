@@ -352,6 +352,71 @@ export function Settings({ onClose }: { onClose: () => void }) {
                   ))}
                 </div>
               </div>
+
+              {/* ドラッグモード */}
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    ドラッグで位置を移動
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    PC: ドラッグで移動 / スマホ: 長押し（500ms）でドラッグ開始
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    setLocalSettings({
+                      ...localSettings,
+                      calendar: {
+                        ...localSettings.calendar,
+                        isDraggable: !localSettings.calendar.isDraggable,
+                      },
+                    })
+                  }
+                  disabled={!localSettings.calendar.visible}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    localSettings.calendar.isDraggable
+                      ? "bg-blue-600"
+                      : "bg-gray-200"
+                  } ${!localSettings.calendar.visible ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      localSettings.calendar.isDraggable
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* 位置リセット */}
+              {localSettings.calendar.useCustomPosition && (
+                <div>
+                  <button
+                    onClick={() =>
+                      setLocalSettings({
+                        ...localSettings,
+                        calendar: {
+                          ...localSettings.calendar,
+                          useCustomPosition: false,
+                        },
+                      })
+                    }
+                    disabled={!localSettings.calendar.visible}
+                    className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    カレンダー位置をリセット
+                  </button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    選択した表示位置（{
+                      localSettings.calendar.position === "top-left" ? "左上" :
+                      localSettings.calendar.position === "top-right" ? "右上" :
+                      localSettings.calendar.position === "bottom-left" ? "左下" : "右下"
+                    }）に戻します
+                  </p>
+                </div>
+              )}
             </div>
           </section>
 

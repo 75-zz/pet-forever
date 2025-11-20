@@ -50,6 +50,9 @@ export interface CalendarSettings {
   font: CalendarFont; // フォント選択
   textColor: string; // カレンダーの文字色
   size: CalendarSize; // 文字サイズ（小・中・大）
+  useCustomPosition: boolean; // カスタム位置を使用するか
+  customPosition: { x: number; y: number }; // カスタム位置（ピクセル座標）
+  isDraggable: boolean; // ドラッグ可能かどうか
 }
 
 // メディア表示設定
@@ -172,6 +175,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
     font: "roboto",
     textColor: "#000000",
     size: "medium",
+    useCustomPosition: false,
+    customPosition: { x: 32, y: 32 },
+    isDraggable: true,
   },
   media: {
     videoSeconds: {
