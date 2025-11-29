@@ -75,6 +75,8 @@ export interface MediaSettings {
   fadeInDuration: number; // フェードイン時間（秒）
   fadeOutDuration: number; // フェードアウト時間（秒）
   animationSpeed: number; // アニメーション速度（1.0が標準、0.5で遅く、2.0で速く）
+  // フレーム設定
+  frameEnabled: boolean; // 画像フレームの表示ON/OFF
 }
 
 // 多様性設定
@@ -197,6 +199,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     fadeInDuration: 1.0,
     fadeOutDuration: 1.0,
     animationSpeed: 1.0,
+    frameEnabled: true,
   },
   diversity: {
     historyWindow: 20,

@@ -220,8 +220,14 @@ function ImageItem({
   const [loaded, setLoaded] = useState(false);
   const settings = useAppStore((state) => state.settings);
 
+  // ランダムな回転角度を生成（-15度〜15度）
+  const [randomRotation] = useState(() => Math.random() * 30 - 15);
+
   // アニメーション時間を設定から取得
   const animationDuration = settings.media.imageDuration / settings.media.animationSpeed;
+
+  // フレーム設定
+  const frameEnabled = settings.media.frameEnabled;
 
   return (
     <div
@@ -238,15 +244,43 @@ function ImageItem({
             animation: `slideDown ${animationDuration}s linear forwards`,
           }}
         >
-          <img
-            src={src}
-            alt=""
-            className="w-full h-full object-cover"
-            style={{
-              transform: "scale(1.1)",
-            }}
-            onLoad={() => setLoaded(true)}
-          />
+          {frameEnabled ? (
+            // フレームあり：額縁風の表示
+            <div
+              className="w-full h-full flex items-center justify-center"
+              style={{
+                transform: `rotate(${randomRotation}deg)`,
+                padding: '5%',
+              }}
+            >
+              <div
+                className="relative w-full h-full"
+                style={{
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(0,0,0,0.1)',
+                  border: '12px solid white',
+                  borderRadius: '2px',
+                }}
+              >
+                <img
+                  src={src}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  onLoad={() => setLoaded(true)}
+                />
+              </div>
+            </div>
+          ) : (
+            // フレームなし：従来の表示
+            <img
+              src={src}
+              alt=""
+              className="w-full h-full object-cover"
+              style={{
+                transform: "scale(1.1)",
+              }}
+              onLoad={() => setLoaded(true)}
+            />
+          )}
         </div>
       </div>
 

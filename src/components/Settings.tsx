@@ -424,6 +424,42 @@ export function Settings({ onClose }: { onClose: () => void }) {
           <section>
             <h3 className="text-lg sm:text-xl font-bold text-black mb-3 sm:mb-4">メディア設定</h3>
             <div className="space-y-4">
+              {/* 画像フレーム */}
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    画像フレーム
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">
+                    額縁風のフレームをランダムな角度で表示
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    setLocalSettings({
+                      ...localSettings,
+                      media: {
+                        ...localSettings.media,
+                        frameEnabled: !localSettings.media.frameEnabled,
+                      },
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    localSettings.media.frameEnabled
+                      ? "bg-blue-600"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      localSettings.media.frameEnabled
+                        ? "translate-x-6"
+                        : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
               {/* 画像表示時間 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

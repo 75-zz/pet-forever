@@ -241,6 +241,7 @@ function mergeSettings(
       fadeInDuration: stored.media?.fadeInDuration ?? defaults.media.fadeInDuration,
       fadeOutDuration: stored.media?.fadeOutDuration ?? defaults.media.fadeOutDuration,
       animationSpeed: stored.media?.animationSpeed ?? defaults.media.animationSpeed,
+      frameEnabled: stored.media?.frameEnabled ?? defaults.media.frameEnabled,
     },
     diversity: {
       historyWindow: stored.diversity?.historyWindow ?? defaults.diversity.historyWindow,
