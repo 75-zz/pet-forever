@@ -186,9 +186,9 @@ function ImageSlide() {
       </div>
     );
   } else {
-    // 2枚の場合は左右に分割
+    // 2枚の場合はレイヤーで重ねて表示
     return (
-      <div className="w-full h-full flex">
+      <div className="w-full h-full relative flex items-center justify-center">
         {playback.currentImages.map((image, index) => (
           <ImageItem
             key={image.item.id}
@@ -229,13 +229,32 @@ function ImageItem({
   // フレーム設定
   const frameEnabled = settings.media.frameEnabled;
 
+  // 2枚表示時の位置調整
+  const getPositionStyle = () => {
+    if (isSingle || total === 1) {
+      return {};
+    }
+    // 2枚の場合：1枚目は左に、2枚目は右に少しずらす
+    const offset = index === 0 ? '-8%' : '8%';
+    return {
+      position: 'absolute' as const,
+      left: '50%',
+      top: '50%',
+      transform: `translate(calc(-50% + ${offset}), -50%)`,
+      width: '75%',
+      height: '75%',
+      zIndex: index, // 2枚目が上に来る
+    };
+  };
+
   return (
     <div
       className={`${
-        isSingle ? "w-full h-full" : "flex-1 h-full"
+        isSingle ? "w-full h-full" : ""
       } flex items-center justify-center transition-opacity duration-500 ${
         loaded ? "opacity-100" : "opacity-0"
       }`}
+      style={getPositionStyle()}
     >
       <div className="relative w-full h-full overflow-hidden">
         <div
