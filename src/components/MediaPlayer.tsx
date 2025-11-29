@@ -299,8 +299,7 @@ function ImageItem({
               <div
                 className="relative w-full h-full"
                 style={{
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(0,0,0,0.1)',
-                  border: '12px solid white',
+                  boxShadow: '0 0 0 12px white, 0 10px 40px rgba(0,0,0,0.3)',
                   borderRadius: '2px',
                 }}
               >
