@@ -291,25 +291,19 @@ function ImageItem({
           {frameEnabled ? (
             // フレームあり：額縁風の表示
             <div
-              className="w-full h-full flex items-center justify-center"
+              className="relative w-full h-full"
               style={{
                 transform: `rotate(${randomRotation}deg)`,
+                boxShadow: '0 0 0 12px white, 0 10px 40px rgba(0,0,0,0.3)',
+                borderRadius: '2px',
               }}
             >
-              <div
-                className="relative w-full h-full"
-                style={{
-                  boxShadow: '0 0 0 12px white, 0 10px 40px rgba(0,0,0,0.3)',
-                  borderRadius: '2px',
-                }}
-              >
-                <img
-                  src={src}
-                  alt=""
-                  className="w-full h-full object-contain"
-                  onLoad={handleImageLoad}
-                />
-              </div>
+              <img
+                src={src}
+                alt=""
+                className="w-full h-full object-contain"
+                onLoad={handleImageLoad}
+              />
             </div>
           ) : (
             // フレームなし：従来の表示
