@@ -276,7 +276,7 @@ function ImageItem({
     <div
       className={`${
         isSingle ? "w-full h-full" : ""
-      } flex items-center justify-center transition-opacity duration-500 ${
+      } transition-opacity duration-500 ${
         loaded ? "opacity-100" : "opacity-0"
       }`}
       style={getPositionStyle()}
