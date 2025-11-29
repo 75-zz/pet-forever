@@ -234,15 +234,15 @@ function ImageItem({
     if (isSingle || total === 1) {
       return {};
     }
-    // 2枚の場合：1枚目は左に、2枚目は右に少しずらす
-    const offset = index === 0 ? '-8%' : '8%';
+    // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを減らす）
+    const offset = index === 0 ? '-20%' : '20%';
     return {
       position: 'absolute' as const,
       left: '50%',
       top: '50%',
       transform: `translate(calc(-50% + ${offset}), -50%)`,
-      width: '75%',
-      height: '75%',
+      width: '65%',
+      height: '65%',
       zIndex: index, // 2枚目が上に来る
     };
   };
@@ -256,7 +256,7 @@ function ImageItem({
       }`}
       style={getPositionStyle()}
     >
-      <div className="relative w-full h-full overflow-hidden">
+      <div className="relative w-full h-full overflow-visible">
         <div
           className="absolute inset-0"
           style={{
@@ -269,7 +269,7 @@ function ImageItem({
               className="w-full h-full flex items-center justify-center"
               style={{
                 transform: `rotate(${randomRotation}deg)`,
-                padding: '5%',
+                padding: isSingle ? '2%' : '6%',
               }}
             >
               <div
