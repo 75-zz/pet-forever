@@ -218,6 +218,7 @@ function ImageItem({
   isSingle: boolean;
 }) {
   const [loaded, setLoaded] = useState(false);
+  const [imageAspect, setImageAspect] = useState(1);
   const settings = useAppStore((state) => state.settings);
 
   // ランダムな回転角度を生成（-15度〜15度）
@@ -229,6 +230,14 @@ function ImageItem({
   // フレーム設定
   const frameEnabled = settings.media.frameEnabled;
 
+  // 画像読み込み時にアスペクト比を取得
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const aspect = img.naturalWidth / img.naturalHeight;
+    setImageAspect(aspect);
+    setLoaded(true);
+  };
+
   // 2枚表示時の位置調整
   const getPositionStyle = () => {
     if (isSingle || total === 1) {
@@ -236,13 +245,28 @@ function ImageItem({
     }
     // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを大幅に減らす）
     const offset = index === 0 ? '-30%' : '30%';
+
+    // 画像のアスペクト比に応じてフレームサイズを調整
+    let width = '55%';
+    let height = '55%';
+
+    if (imageAspect > 1.3) {
+      // 横長の画像
+      width = '60%';
+      height = '45%';
+    } else if (imageAspect < 0.8) {
+      // 縦長の画像
+      width = '45%';
+      height = '60%';
+    }
+
     return {
       position: 'absolute' as const,
       left: '50%',
       top: '50%',
       transform: `translate(calc(-50% + ${offset}), -50%)`,
-      width: '55%',
-      height: '55%',
+      width,
+      height,
       zIndex: index, // 2枚目が上に来る
     };
   };
@@ -283,8 +307,8 @@ function ImageItem({
                 <img
                   src={src}
                   alt=""
-                  className="w-full h-full object-contain"
-                  onLoad={() => setLoaded(true)}
+                  className="w-full h-full object-cover"
+                  onLoad={handleImageLoad}
                 />
               </div>
             </div>
@@ -293,11 +317,11 @@ function ImageItem({
             <img
               src={src}
               alt=""
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
               style={{
-                transform: isSingle ? "scale(1.05)" : "scale(1.0)",
+                transform: isSingle ? "scale(1.1)" : "scale(1.0)",
               }}
-              onLoad={() => setLoaded(true)}
+              onLoad={handleImageLoad}
             />
           )}
         </div>
