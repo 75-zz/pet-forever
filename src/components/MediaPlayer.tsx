@@ -294,7 +294,6 @@ function ImageItem({
               className="w-full h-full flex items-center justify-center"
               style={{
                 transform: `rotate(${randomRotation}deg)`,
-                padding: isSingle ? '2%' : '3%',
               }}
             >
               <div
