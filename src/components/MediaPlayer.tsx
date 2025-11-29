@@ -234,15 +234,15 @@ function ImageItem({
     if (isSingle || total === 1) {
       return {};
     }
-    // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを減らす）
-    const offset = index === 0 ? '-20%' : '20%';
+    // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを大幅に減らす）
+    const offset = index === 0 ? '-30%' : '30%';
     return {
       position: 'absolute' as const,
       left: '50%',
       top: '50%',
       transform: `translate(calc(-50% + ${offset}), -50%)`,
-      width: '65%',
-      height: '65%',
+      width: '55%',
+      height: '55%',
       zIndex: index, // 2枚目が上に来る
     };
   };
