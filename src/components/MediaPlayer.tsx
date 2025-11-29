@@ -301,7 +301,7 @@ function ImageItem({
               <img
                 src={src}
                 alt=""
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
                 onLoad={handleImageLoad}
               />
             </div>
