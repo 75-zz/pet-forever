@@ -246,26 +246,19 @@ function ImageItem({
     // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを大幅に減らす）
     const offset = index === 0 ? '-30%' : '30%';
 
-    // 画像のアスペクト比に応じてフレームサイズを正確に調整
-    // 基準の高さを設定し、幅をアスペクト比に応じて計算
-    const baseHeight = 55; // 基準の高さ（%）
+    // 画像のアスペクト比に完全に一致するフレームサイズを計算
+    const maxSize = 55; // 最大サイズ（%）
     let width: string;
     let height: string;
 
-    if (imageAspect > 1.5) {
-      // 非常に横長の画像
-      const calculatedWidth = Math.min(baseHeight * imageAspect, 70);
-      width = `${calculatedWidth}%`;
-      height = `${calculatedWidth / imageAspect}%`;
-    } else if (imageAspect < 0.7) {
-      // 非常に縦長の画像
-      const calculatedHeight = Math.min(baseHeight / imageAspect, 70);
-      height = `${calculatedHeight}%`;
-      width = `${calculatedHeight * imageAspect}%`;
+    if (imageAspect >= 1) {
+      // 横長または正方形の画像
+      width = `${maxSize}%`;
+      height = `${maxSize / imageAspect}%`;
     } else {
-      // 通常のアスペクト比
-      width = `${baseHeight * imageAspect}%`;
-      height = `${baseHeight}%`;
+      // 縦長の画像
+      height = `${maxSize}%`;
+      width = `${maxSize * imageAspect}%`;
     }
 
     return {
@@ -301,7 +294,7 @@ function ImageItem({
               className="w-full h-full flex items-center justify-center"
               style={{
                 transform: `rotate(${randomRotation}deg)`,
-                padding: isSingle ? '2%' : '6%',
+                padding: isSingle ? '2%' : '3%',
               }}
             >
               <div
