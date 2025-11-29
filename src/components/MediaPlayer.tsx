@@ -264,7 +264,7 @@ function ImageItem({
                 <img
                   src={src}
                   alt=""
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full ${isSingle ? 'object-contain' : 'object-cover'}`}
                   onLoad={() => setLoaded(true)}
                 />
               </div>
@@ -274,7 +274,7 @@ function ImageItem({
             <img
               src={src}
               alt=""
-              className="w-full h-full object-cover"
+              className={`w-full h-full ${isSingle ? 'object-contain' : 'object-cover'}`}
               style={{
                 transform: "scale(1.1)",
               }}
