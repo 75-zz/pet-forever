@@ -246,18 +246,26 @@ function ImageItem({
     // 2枚の場合：1枚目は左に、2枚目は右にずらす（重なりを大幅に減らす）
     const offset = index === 0 ? '-30%' : '30%';
 
-    // 画像のアスペクト比に応じてフレームサイズを調整
-    let width = '55%';
-    let height = '55%';
+    // 画像のアスペクト比に応じてフレームサイズを正確に調整
+    // 基準の高さを設定し、幅をアスペクト比に応じて計算
+    const baseHeight = 55; // 基準の高さ（%）
+    let width: string;
+    let height: string;
 
-    if (imageAspect > 1.3) {
-      // 横長の画像
-      width = '60%';
-      height = '45%';
-    } else if (imageAspect < 0.8) {
-      // 縦長の画像
-      width = '45%';
-      height = '60%';
+    if (imageAspect > 1.5) {
+      // 非常に横長の画像
+      const calculatedWidth = Math.min(baseHeight * imageAspect, 70);
+      width = `${calculatedWidth}%`;
+      height = `${calculatedWidth / imageAspect}%`;
+    } else if (imageAspect < 0.7) {
+      // 非常に縦長の画像
+      const calculatedHeight = Math.min(baseHeight / imageAspect, 70);
+      height = `${calculatedHeight}%`;
+      width = `${calculatedHeight * imageAspect}%`;
+    } else {
+      // 通常のアスペクト比
+      width = `${baseHeight * imageAspect}%`;
+      height = `${baseHeight}%`;
     }
 
     return {
